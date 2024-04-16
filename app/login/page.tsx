@@ -16,6 +16,7 @@ export default function Login({
 
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "discord",
+      options: { redirectTo: "http://stellar-depot.vercel.app/auth/callback" },
     });
 
     console.log({ data, error });
