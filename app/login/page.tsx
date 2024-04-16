@@ -14,15 +14,17 @@ export default function Login({
 
     const supabase = createClient();
 
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "discord",
     });
+
+    console.log({ data, error });
 
     if (error) {
       return redirect("/login?message=Could not authenticate user");
     }
 
-    return redirect("/protected");
+    return redirect(data.url);
   };
 
   return (
