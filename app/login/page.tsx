@@ -1,22 +1,33 @@
 import Link from "next/link";
-import { headers } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { SubmitButton } from "./submit-button";
+import { headers } from "next/headers";
 
-export default function Login({
+export default async function Login({
   searchParams,
 }: {
   searchParams: { message: string };
 }) {
+  const supabase = createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    return redirect("/");
+  }
+
   const signIn = async (formData: FormData) => {
     "use server";
 
+    const origin = headers().get("origin");
     const supabase = createClient();
 
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "discord",
-      options: { redirectTo: "http://stellar-depot.vercel.app/auth/callback" },
+      options: { redirectTo: `${origin}/auth/callback` },
     });
 
     console.log({ data, error });
